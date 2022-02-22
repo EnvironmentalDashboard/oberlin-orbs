@@ -4,8 +4,8 @@ error_reporting(-1);
 ini_set('display_errors', 'On');
 require 'db.php';
 foreach ($db->query('SELECT id, elec_uuid, water_uuid, elec_rvid, water_rvid, disabled, INET_NTOA(ip) AS ip FROM orbs ORDER BY id ASC') as $row) {
-    if ($row['disabled'] === '0') {
-		if ($row['elec_uuid'] == null) {
+	if ($row['disabled'] === '0') {
+    if ($row['elec_uuid'] == null) {
       $elec = 'X';
     } else {
       $stmt = $db->prepare('SELECT relative_value FROM relative_values WHERE id = ?');
