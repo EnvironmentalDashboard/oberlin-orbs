@@ -3,7 +3,7 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 require 'db.php';
-$result = $db->query('SELECT name,inet_ntoa(ip) as ip_address,ip, disabled, water_uuid, elec_uuid, elec_rvid, water_rvid, o.last_connectioned_on, r1.relative_value as elec_rv, r2.relative_value as water_rv, testing FROM orbs o LEFT JOIN relative_values r1 ON r1.id = o.elec_rvid LEFT JOIN relative_values r2 ON r2.id = o.water_rvid WHERE o.disabled = 0 ORDER BY `name`');
+$result = $db->query('SELECT o.id as orb_id, name,inet_ntoa(ip) as ip_address, disabled, water_uuid, elec_uuid, elec_rvid, water_rvid, o.last_connectioned_on, r1.relative_value as elec_rv, r2.relative_value as water_rv, testing FROM orbs o LEFT JOIN relative_values r1 ON r1.id = o.elec_rvid LEFT JOIN relative_values r2 ON r2.id = o.water_rvid WHERE o.disabled = 0 ORDER BY `name`');
 foreach ($result as $row) {
 	if ($row['disabled'] === '0') {
     if ($row['elec_rv'] == null) {
@@ -28,9 +28,9 @@ foreach ($result as $row) {
     /* update last sent relative value to orb */
     $last_sent_relative_value = "$elec#$water";
     $stmt = $db->prepare('UPDATE orbs SET last_sent_relative_value = ? WHERE id = ?');
-    $stmt->execute(array($last_sent_relative_value, $row['id']));
+    $stmt->execute(array($last_sent_relative_value, $row['orb_id']));
     // $stmt = $db->prepare('UPDATE orbs SET last_resp = ? WHERE id = ?');
-    // $stmt->execute(array($result, $row['id']));
+    // $stmt->execute(array($result, $row['orb_id']));
 	} //else {
 	// 	shell_exec("echo \"^R00B00G00f32+\" | timeout 2s netcat {$row['ip_address']} 9950");
 	// }
